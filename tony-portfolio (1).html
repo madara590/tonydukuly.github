@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tony M Dukuly — Designer & Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0c0f14;
+    --surface: #111520;
+    --surface2: #161b26;
+    --accent: #c9a84c;
+    --accent2: #e8c97a;
+    --blue: #2563eb;
+    --blue-light: #3b82f6;
+    --white: #f0f2f5;
+    --text: #a8b2c4;
+    --border: rgba(201,168,76,0.12);
+    --border2: rgba(255,255,255,0.06);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  .cursor {
+    position: fixed; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width .2s, height .2s;
+  }
+  .cursor-ring {
+    position: fixed; width: 32px; height: 32px;
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 50%; pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: left .1s ease, top .1s ease, width .2s, height .2s;
+  }
+  .cursor.big { width: 14px; height: 14px; background: var(--blue-light); }
+  .cursor-ring.big { width: 48px; height: 48px; border-color: var(--blue-light); }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(37,99,235,0.04), transparent);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 72px;
+    transition: background .4s, border-color .4s;
+    border-bottom: 1px solid transparent;
+  }
+  nav.stuck {
+    background: rgba(12,15,20,0.92);
+    border-color: var(--border2);
+    backdrop-filter: blur(20px);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem; font-weight: 700;
+    letter-spacing: 0.5px; color: var(--white);
+  }
+  .nav-logo span { color: var(--accent); }
+  nav ul { list-style: none; display: flex; gap: 40px; }
+  nav ul a {
+    font-size: 0.8rem; font-weight: 500;
+    letter-spacing: 0.5px; color: var(--text);
+    text-decoration: none; transition: color .2s;
+  }
+  nav ul a:hover { color: var(--white); }
+  .nav-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 1.5px;
+    padding: 10px 22px; text-transform: uppercase;
+    background: transparent; border: 1px solid var(--accent);
+    color: var(--accent); cursor: none;
+    transition: background .3s, color .3s;
+  }
+  .nav-btn:hover { background: var(--accent); color: var(--bg); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 160px 72px 100px;
+    position: relative; z-index: 1; overflow: hidden;
+  }
+  .hero-status {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 28px;
+    opacity: 0; animation: up .6s .2s forwards;
+  }
+  .status-dot {
+    width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+  }
+  .hero-name {
+    font-family: 'Playfair Display', serif; font-weight: 900;
+    font-size: clamp(3.5rem, 8vw, 8rem);
+    line-height: 1; letter-spacing: -1px;
+    opacity: 0; animation: up .8s .35s forwards;
+  }
+  .hero-name em {
+    display: block; font-style: normal; color: transparent;
+    -webkit-text-stroke: 1px rgba(240,242,245,0.2);
+  }
+  .hero-name .gold { color: var(--accent); font-style: italic; }
+  .hero-title {
+    margin-top: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem; color: var(--text); letter-spacing: 1px;
+    opacity: 0; animation: up .7s .5s forwards;
+  }
+  .hero-title span { color: var(--white); font-weight: 500; }
+  .hero-bio {
+    margin-top: 24px; max-width: 480px;
+    font-size: 1rem; line-height: 1.85;
+    color: var(--text); font-weight: 300;
+    opacity: 0; animation: up .7s .65s forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 14px; margin-top: 44px;
+    opacity: 0; animation: up .7s .8s forwards;
+  }
+  .btn-gold {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+    padding: 15px 36px; background: var(--accent); color: var(--bg);
+    border: none; cursor: none; font-weight: 500;
+    transition: background .3s, transform .2s, box-shadow .3s;
+  }
+  .btn-gold:hover {
+    background: var(--accent2); transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(201,168,76,0.25);
+  }
+  .btn-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+    padding: 15px 36px; background: transparent;
+    border: 1px solid var(--border2); color: var(--text); cursor: none;
+    transition: border-color .3s, color .3s;
+  }
+  .btn-line:hover { border-color: var(--accent); color: var(--accent); }
+  .hero-scroll {
+    position: absolute; bottom: 48px; left: 72px;
+    display: flex; align-items: center; gap: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 3px; color: var(--text);
+    text-transform: uppercase;
+    opacity: 0; animation: fadeIn 1s 1.4s forwards;
+  }
+  .scroll-bar {
+    width: 1px; height: 52px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollAnim 2s ease-in-out infinite;
+  }
+  @keyframes scrollAnim {
+    0%,100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    position: relative; z-index: 1;
+  }
+
+  section { padding: 110px 72px; position: relative; z-index: 1; }
+
+  .sec-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .sec-label::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+  .sec-title {
+    font-family: 'Playfair Display', serif; font-weight: 900;
+    font-size: clamp(2.2rem, 4.5vw, 4rem);
+    line-height: 1.05; letter-spacing: -0.5px;
+  }
+
+  /* ABOUT */
+  #about { background: var(--surface); }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1.5fr;
+    gap: 80px; align-items: center; margin-top: 64px;
+  }
+  .about-card {
+    background: var(--surface2); border: 1px solid var(--border2);
+    padding: 40px; position: relative;
+  }
+  .about-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(to right, var(--accent), transparent);
+  }
+  .about-initials {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem; font-weight: 900; color: var(--accent); line-height: 1;
+  }
+  .about-name-full { font-size: 1rem; font-weight: 600; margin-top: 16px; color: var(--white); }
+  .about-role-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 2px; color: var(--text); margin-top: 6px;
+  }
+  .about-stats {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border2); margin-top: 32px;
+  }
+  .astat { background: var(--surface2); padding: 18px 20px; }
+  .astat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 700; color: var(--accent); line-height: 1;
+  }
+  .astat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 1px;
+    color: var(--text); text-transform: uppercase; margin-top: 4px;
+  }
+  .about-text p {
+    font-size: 1rem; line-height: 1.9;
+    color: var(--text); font-weight: 300; margin-bottom: 16px;
+  }
+  .about-text p strong { color: var(--white); font-weight: 500; }
+
+  /* PROJECTS */
+  #projects { }
+  .projects-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 56px; flex-wrap: wrap; gap: 20px;
+  }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+  }
+  .project-card {
+    background: var(--surface); border: 1px solid var(--border2);
+    overflow: hidden; cursor: none;
+    transition: border-color .3s, transform .3s, box-shadow .3s;
+  }
+  .project-card:hover {
+    border-color: var(--accent); transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(201,168,76,0.1);
+  }
+  .project-img {
+    width: 100%; aspect-ratio: 16/9;
+    background: var(--surface2); position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .project-img-placeholder {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem; font-weight: 900;
+    color: rgba(201,168,76,0.15); letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--surface2), var(--bg));
+  }
+  .project-img img {
+    width: 100%; height: 100%; object-fit: cover; transition: transform .5s;
+  }
+  .project-card:hover .project-img img { transform: scale(1.04); }
+  .project-overlay {
+    position: absolute; inset: 0;
+    background: rgba(12,15,20,0.85);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity .3s;
+  }
+  .project-card:hover .project-overlay { opacity: 1; }
+  .overlay-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase;
+    padding: 12px 28px; background: var(--accent); color: var(--bg);
+    border: none; cursor: none; font-weight: 500;
+    transform: translateY(8px); transition: transform .3s;
+  }
+  .project-card:hover .overlay-btn { transform: translateY(0); }
+  .project-body { padding: 24px 28px 28px; }
+  .project-category {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px;
+  }
+  .project-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 700; line-height: 1.2;
+    color: var(--white); transition: color .3s;
+  }
+  .project-card:hover .project-title { color: var(--accent2); }
+  .project-desc {
+    font-size: 0.85rem; line-height: 1.7;
+    color: var(--text); margin-top: 10px; font-weight: 300;
+  }
+  .project-tech { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .tech-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 0.5px;
+    padding: 4px 10px; background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border2); color: var(--text);
+    transition: border-color .3s, color .3s;
+  }
+  .project-card:hover .tech-tag { border-color: rgba(201,168,76,0.2); color: var(--accent); }
+
+  .add-project-card {
+    background: transparent; border: 1px dashed rgba(201,168,76,0.2);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 12px;
+    min-height: 320px; cursor: none;
+    transition: border-color .3s, background .3s;
+  }
+  .add-project-card:hover { border-color: var(--accent); background: rgba(201,168,76,0.03); }
+  .add-icon {
+    width: 48px; height: 48px; border: 1px solid rgba(201,168,76,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; color: var(--accent); transition: background .3s;
+  }
+  .add-project-card:hover .add-icon { background: rgba(201,168,76,0.08); }
+  .add-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 2px;
+    color: var(--text); text-transform: uppercase;
+  }
+
+  /* SKILLS */
+  #skills { background: var(--surface); }
+  .skills-layout {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2px; background: var(--border2); margin-top: 60px;
+  }
+  .skill-cell {
+    background: var(--surface); padding: 36px 30px;
+    border-top: 2px solid transparent;
+    transition: border-color .3s, background .3s;
+  }
+  .skill-cell:hover { border-color: var(--accent); background: var(--surface2); }
+  .skill-cell-icon { font-size: 1.6rem; margin-bottom: 16px; }
+  .skill-cell-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; font-weight: 700; color: var(--white); margin-bottom: 12px;
+  }
+  .skill-cell-list {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem; color: var(--text); line-height: 2; letter-spacing: 0.3px;
+  }
+
+  /* CONTACT */
+  #contact { }
+  .contact-layout {
+    display: grid; grid-template-columns: 1fr 1.2fr;
+    gap: 80px; margin-top: 60px; align-items: start;
+  }
+  .contact-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    font-weight: 700; line-height: 1.1; margin-bottom: 16px;
+  }
+  .contact-info h3 em { color: var(--accent); font-style: italic; }
+  .contact-info p {
+    font-size: 0.95rem; line-height: 1.8;
+    color: var(--text); font-weight: 300; max-width: 380px;
+  }
+  .contact-details { margin-top: 40px; display: flex; flex-direction: column; gap: 12px; }
+  .c-detail {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 20px; background: var(--surface);
+    border: 1px solid var(--border2); text-decoration: none;
+    transition: border-color .3s, background .3s; cursor: none;
+  }
+  .c-detail:hover { border-color: var(--accent); background: var(--surface2); }
+  .c-icon {
+    width: 36px; height: 36px; background: rgba(201,168,76,0.08);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+  }
+  .c-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 2px;
+    color: var(--text); text-transform: uppercase;
+  }
+  .c-val { font-size: 0.88rem; font-weight: 500; color: var(--white); margin-top: 2px; }
+
+  .contact-form { display: flex; flex-direction: column; gap: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .fg { display: flex; flex-direction: column; gap: 7px; }
+  .fg label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 2px;
+    color: var(--text); text-transform: uppercase;
+  }
+  .fg input, .fg textarea, .fg select {
+    background: var(--surface); border: 1px solid var(--border2);
+    padding: 13px 16px; color: var(--white);
+    font-family: 'Inter', sans-serif; font-size: 0.88rem;
+    outline: none; cursor: none;
+    transition: border-color .3s, background .3s;
+    -webkit-appearance: none;
+  }
+  .fg input:focus, .fg textarea:focus, .fg select:focus {
+    border-color: var(--accent); background: var(--surface2);
+  }
+  .fg textarea { min-height: 130px; resize: vertical; }
+  .fg select option { background: var(--surface); }
+  .send-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+    padding: 17px; width: 100%; background: var(--accent); color: var(--bg);
+    border: none; cursor: none; font-weight: 600;
+    transition: background .3s, box-shadow .3s, transform .2s;
+  }
+  .send-btn:hover {
+    background: var(--accent2);
+    box-shadow: 0 8px 32px rgba(201,168,76,0.3);
+    transform: translateY(-2px);
+  }
+
+  footer {
+    border-top: 1px solid var(--border2); padding: 36px 72px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; z-index: 1;
+  }
+  footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 1.5px;
+    color: var(--text); text-transform: uppercase;
+  }
+
+  .marquee-wrap {
+    overflow: hidden; padding: 16px 0;
+    border-top: 1px solid var(--border2);
+    border-bottom: 1px solid var(--border2);
+    position: relative; z-index: 1;
+  }
+  .marquee-inner {
+    display: flex; gap: 48px; width: max-content;
+    animation: scroll 22s linear infinite;
+  }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .m-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 4px;
+    color: rgba(201,168,76,0.25); text-transform: uppercase;
+    display: flex; align-items: center; gap: 20px; white-space: nowrap;
+  }
+  .m-dot { width: 3px; height: 3px; background: rgba(201,168,76,0.2); border-radius: 50%; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    z-index: 500; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--surface2); border: 1px solid var(--border);
+    width: 100%; max-width: 560px; padding: 44px;
+    transform: translateY(24px); transition: transform .3s;
+    position: relative; max-height: 90vh; overflow-y: auto;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-close {
+    position: absolute; top: 16px; right: 20px;
+    font-size: 1.4rem; color: var(--text);
+    background: none; border: none; cursor: none; transition: color .2s;
+  }
+  .modal-close:hover { color: var(--white); }
+  .modal h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 700; margin-bottom: 28px;
+  }
+  .modal h3 span { color: var(--accent); }
+  .modal-form { display: flex; flex-direction: column; gap: 14px; }
+  .modal-form .fg { display: flex; flex-direction: column; gap: 6px; }
+  .modal-form label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 2px;
+    color: var(--text); text-transform: uppercase;
+  }
+  .modal-form input,
+  .modal-form textarea,
+  .modal-form select {
+    background: var(--surface); border: 1px solid var(--border2);
+    padding: 12px 16px; color: var(--white);
+    font-family: 'Inter', sans-serif; font-size: 0.88rem;
+    outline: none; width: 100%; cursor: none;
+    transition: border-color .3s; -webkit-appearance: none;
+  }
+  .modal-form input:focus,
+  .modal-form textarea:focus { border-color: var(--accent); }
+  .modal-form textarea { min-height: 90px; resize: vertical; }
+  .modal-form select option { background: var(--surface); }
+  .modal-submit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
+    padding: 15px; width: 100%; background: var(--accent); color: var(--bg);
+    border: none; cursor: none; font-weight: 600; transition: background .3s;
+  }
+  .modal-submit:hover { background: var(--accent2); }
+
+  .reveal {
+    opacity: 0; transform: translateY(36px);
+    transition: opacity .7s cubic-bezier(.25,.46,.45,.94), transform .7s cubic-bezier(.25,.46,.45,.94);
+  }
+  .reveal.in { opacity: 1; transform: none; }
+  .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+  .d4{transition-delay:.4s}.d5{transition-delay:.5s}.d6{transition-delay:.6s}
+
+  @keyframes up { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:none} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  @media(max-width:900px){
+    nav{padding:18px 24px;} nav ul{display:none;}
+    section{padding:80px 24px;} .hero{padding:130px 24px 80px;}
+    .hero-scroll{left:24px;} footer{padding:28px 24px;flex-direction:column;gap:8px;text-align:center;}
+    .about-grid,.contact-layout{grid-template-columns:1fr;}
+    .skills-layout{grid-template-columns:1fr 1fr;}
+    .projects-grid{grid-template-columns:1fr;} .form-row{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">✕</button>
+    <h3>Add New <span>Project</span></h3>
+    <div class="modal-form">
+      <div class="fg"><label>Project Title *</label><input type="text" id="pTitle" placeholder="e.g. Brand Identity for XYZ"/></div>
+      <div class="fg"><label>Category *</label>
+        <select id="pCat">
+          <option value="">Select a category</option>
+          <option>UI/UX Design</option><option>Web Development</option>
+          <option>Mobile App</option><option>Branding</option>
+          <option>Full-Stack</option><option>Other</option>
+        </select>
+      </div>
+      <div class="fg"><label>Short Description *</label><textarea id="pDesc" placeholder="Briefly describe the project and your role..."></textarea></div>
+      <div class="fg"><label>Tech / Tools Used</label><input type="text" id="pTech" placeholder="e.g. React, Figma, Node.js (comma separated)"/></div>
+      <div class="fg"><label>Project Image URL (optional)</label><input type="url" id="pImg" placeholder="https://..."/></div>
+      <div class="fg"><label>Live Project Link (optional)</label><input type="url" id="pLink" placeholder="https://..."/></div>
+      <button class="modal-submit" id="modalSubmit">Add to Portfolio →</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">Tony M. <span>Dukuly</span></div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Work</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Hire Me</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-status"><span class="status-dot"></span> Available for New Projects</div>
+  <h1 class="hero-name">
+    TONY M.
+    <em>DU<span class="gold">KU</span>LY</em>
+  </h1>
+  <div class="hero-title">
+    <span>Designer</span> &nbsp;/&nbsp; <span>Developer</span> &nbsp;— Creating Digital Experiences
+  </div>
+  <p class="hero-bio">
+    I bridge the gap between design and engineering — crafting interfaces that are as beautiful as they are functional. Let's build something your clients will love.
+  </p>
+  <div class="hero-actions">
+    <button class="btn-gold" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})">View My Work</button>
+    <button class="btn-line" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Start a Project</button>
+  </div>
+  <div class="hero-scroll"><div class="scroll-bar"></div>Scroll</div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-inner">
+    <div class="m-item">UI/UX Design <span class="m-dot"></span></div>
+    <div class="m-item">React & Next.js <span class="m-dot"></span></div>
+    <div class="m-item">Brand Identity <span class="m-dot"></span></div>
+    <div class="m-item">Mobile Apps <span class="m-dot"></span></div>
+    <div class="m-item">TypeScript <span class="m-dot"></span></div>
+    <div class="m-item">Figma <span class="m-dot"></span></div>
+    <div class="m-item">Node.js <span class="m-dot"></span></div>
+    <div class="m-item">Web Development <span class="m-dot"></span></div>
+    <div class="m-item">UI/UX Design <span class="m-dot"></span></div>
+    <div class="m-item">React & Next.js <span class="m-dot"></span></div>
+    <div class="m-item">Brand Identity <span class="m-dot"></span></div>
+    <div class="m-item">Mobile Apps <span class="m-dot"></span></div>
+    <div class="m-item">TypeScript <span class="m-dot"></span></div>
+    <div class="m-item">Figma <span class="m-dot"></span></div>
+    <div class="m-item">Node.js <span class="m-dot"></span></div>
+    <div class="m-item">Web Development <span class="m-dot"></span></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-card reveal">
+      <div class="about-initials">TM</div>
+      <div class="about-name-full">Tony M. Dukuly</div>
+      <div class="about-role-tag">Designer + Developer</div>
+      <div class="about-stats">
+        <div class="astat"><div class="astat-val">3+</div><div class="astat-label">Years Exp.</div></div>
+        <div class="astat"><div class="astat-val">20+</div><div class="astat-label">Projects</div></div>
+        <div class="astat"><div class="astat-val">15+</div><div class="astat-label">Clients</div></div>
+        <div class="astat"><div class="astat-val">100%</div><div class="astat-label">Committed</div></div>
+      </div>
+    </div>
+    <div class="about-text">
+      <div class="sec-label reveal">Who I Am</div>
+      <h2 class="sec-title reveal d1">The Mind<br>Behind the Work</h2>
+      <p class="reveal d2" style="margin-top:28px">
+        I'm <strong>Tony M. Dukuly</strong> — a designer and developer who believes the best digital products are built at the intersection of <strong>great design and clean code</strong>.
+      </p>
+      <p class="reveal d3">
+        Whether it's a pixel-perfect brand identity, a responsive web application, or a seamless mobile experience — I approach every project with intention, precision, and a commitment to excellence.
+      </p>
+      <p class="reveal d4">
+        I work closely with clients to understand their vision, then turn that vision into a product that <strong>stands out and delivers results</strong>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="projects-header">
+    <div>
+      <div class="sec-label reveal">Portfolio</div>
+      <h2 class="sec-title reveal d1">Selected<br>Projects</h2>
+    </div>
+    <button class="btn-gold reveal d2" id="openModal">+ Add Project</button>
+  </div>
+  <div class="projects-grid" id="projectsGrid">
+    <div class="project-card reveal d1">
+      <div class="project-img">
+        <div class="project-img-placeholder">01</div>
+        <div class="project-overlay"><button class="overlay-btn">View Project</button></div>
+      </div>
+      <div class="project-body">
+        <div class="project-category">Branding</div>
+        <div class="project-title">Brand Identity System</div>
+        <p class="project-desc">Full brand identity including logo, typography, color system, and brand guidelines for a tech startup.</p>
+        <div class="project-tech">
+          <span class="tech-tag">Figma</span><span class="tech-tag">Illustrator</span><span class="tech-tag">Branding</span>
+        </div>
+      </div>
+    </div>
+    <div class="project-card reveal d2">
+      <div class="project-img">
+        <div class="project-img-placeholder">02</div>
+        <div class="project-overlay"><button class="overlay-btn">View Project</button></div>
+      </div>
+      <div class="project-body">
+        <div class="project-category">Web Development</div>
+        <div class="project-title">E-Commerce Platform</div>
+        <p class="project-desc">Full-stack e-commerce solution with product management, cart, and secure checkout integration.</p>
+        <div class="project-tech">
+          <span class="tech-tag">React</span><span class="tech-tag">Node.js</span><span class="tech-tag">MongoDB</span>
+        </div>
+      </div>
+    </div>
+    <div class="project-card reveal d3">
+      <div class="project-img">
+        <div class="project-img-placeholder">03</div>
+        <div class="project-overlay"><button class="overlay-btn">View Project</button></div>
+      </div>
+      <div class="project-body">
+        <div class="project-category">UI/UX Design</div>
+        <div class="project-title">FinTech Mobile App</div>
+        <p class="project-desc">End-to-end product design for a financial management app — research, wireframes, and high-fidelity prototypes.</p>
+        <div class="project-tech">
+          <span class="tech-tag">Figma</span><span class="tech-tag">Prototyping</span><span class="tech-tag">User Research</span>
+        </div>
+      </div>
+    </div>
+    <div class="add-project-card reveal d4" id="addPlaceholder" onclick="document.getElementById('modal').classList.add('open')">
+      <div class="add-icon">+</div>
+      <div class="add-label">Add Your Project</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="sec-label reveal">Expertise</div>
+  <h2 class="sec-title reveal d1">Skills &<br>Toolkit</h2>
+  <div class="skills-layout">
+    <div class="skill-cell reveal d1">
+      <div class="skill-cell-icon">🎨</div>
+      <div class="skill-cell-name">UI/UX Design</div>
+      <div class="skill-cell-list">Figma · Adobe XD<br>Wireframing · Prototyping<br>Design Systems<br>User Research</div>
+    </div>
+    <div class="skill-cell reveal d2">
+      <div class="skill-cell-icon">💻</div>
+      <div class="skill-cell-name">Front-End</div>
+      <div class="skill-cell-list">React · Next.js<br>TypeScript · Tailwind<br>GSAP · Three.js<br>HTML · CSS · JS</div>
+    </div>
+    <div class="skill-cell reveal d3">
+      <div class="skill-cell-icon">⚙️</div>
+      <div class="skill-cell-name">Back-End</div>
+      <div class="skill-cell-list">Node.js · Express<br>REST APIs<br>MongoDB · Firebase<br>Supabase</div>
+    </div>
+    <div class="skill-cell reveal d4">
+      <div class="skill-cell-icon">📱</div>
+      <div class="skill-cell-name">Mobile & More</div>
+      <div class="skill-cell-list">React Native<br>iOS & Android<br>Branding · Identity<br>Git · Vercel · Docker</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" style="background:var(--surface)">
+  <div class="contact-layout">
+    <div class="contact-info">
+      <div class="sec-label reveal">Get In Touch</div>
+      <h3 class="reveal d1">Have a project?<br>Let's <em>talk.</em></h3>
+      <p class="reveal d2">Whether you need a new website, a brand refresh, or a full digital product — I'd love to hear about it. Reach out and let's make it happen.</p>
+      <div class="contact-details">
+        <a class="c-detail reveal d2" href="mailto:tonydukuly18@gmail.com">
+          <div class="c-icon">✉</div>
+          <div class="c-info"><div class="c-label">Email</div><div class="c-val">tonydukuly18@gmail.com</div></div>
+        </a>
+        <a class="c-detail reveal d3" href="tel:+250793898542">
+          <div class="c-icon">📞</div>
+          <div class="c-info"><div class="c-label">Phone / WhatsApp</div><div class="c-val">+250 793 898 542</div></div>
+        </a>
+        <a class="c-detail reveal d4" href="#">
+          <div class="c-icon">💼</div>
+          <div class="c-info"><div class="c-label">LinkedIn</div><div class="c-val">linkedin.com/in/tonydukuly</div></div>
+        </a>
+      </div>
+    </div>
+    <div class="contact-form reveal d2">
+      <div class="form-row">
+        <div class="fg"><label>Full Name</label><input type="text" placeholder="Your name"/></div>
+        <div class="fg"><label>Email</label><input type="email" placeholder="your@email.com"/></div>
+      </div>
+      <div class="fg"><label>Project Type</label>
+        <select>
+          <option value="">Select project type</option>
+          <option>Web Design & Development</option>
+          <option>UI/UX Design</option>
+          <option>Mobile App</option>
+          <option>Brand Identity</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="fg"><label>Budget Range</label>
+        <select>
+          <option value="">Select budget</option>
+          <option>Under $500</option>
+          <option>$500 – $1,500</option>
+          <option>$1,500 – $5,000</option>
+          <option>$5,000+</option>
+        </select>
+      </div>
+      <div class="fg"><label>Tell Me About Your Project</label>
+        <textarea placeholder="Describe your project, goals, and timeline..."></textarea>
+      </div>
+      <button class="send-btn">Send Message →</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="nav-logo" style="font-family:'Playfair Display',serif;font-weight:700">Tony M. <span style="color:var(--accent)">Dukuly</span></div>
+  <p>Designed & Built by Tony M. Dukuly</p>
+  <p>© 2026 — All Rights Reserved</p>
+</footer>
+
+<script>
+  // Cursor
+  const cur = document.getElementById('cursor'), ring = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX+'px'; cur.style.top = e.clientY+'px';
+    ring.style.left = e.clientX+'px'; ring.style.top = e.clientY+'px';
+  });
+  document.querySelectorAll('a,button,.project-card,.c-detail,.skill-cell,.add-project-card,input,textarea,select').forEach(el => {
+    el.addEventListener('mouseenter',()=>{cur.classList.add('big');ring.classList.add('big');});
+    el.addEventListener('mouseleave',()=>{cur.classList.remove('big');ring.classList.remove('big');});
+  });
+
+  // Nav scroll
+  window.addEventListener('scroll',()=>{ document.getElementById('nav').classList.toggle('stuck',scrollY>50); });
+
+  // Reveal
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);} });
+  },{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  // Modal
+  document.getElementById('openModal').addEventListener('click',()=>document.getElementById('modal').classList.add('open'));
+  document.getElementById('modalClose').addEventListener('click',()=>document.getElementById('modal').classList.remove('open'));
+  document.getElementById('modal').addEventListener('click',e=>{ if(e.target===document.getElementById('modal')) document.getElementById('modal').classList.remove('open'); });
+
+  // Add project
+  let count = 3;
+  document.getElementById('modalSubmit').addEventListener('click',()=>{
+    const title = document.getElementById('pTitle').value.trim();
+    const cat = document.getElementById('pCat').value;
+    const desc = document.getElementById('pDesc').value.trim();
+    const tech = document.getElementById('pTech').value.trim();
+    const img = document.getElementById('pImg').value.trim();
+    const link = document.getElementById('pLink').value.trim();
+    if(!title||!cat||!desc){alert('Please fill in the required fields (Title, Category, Description).');return;}
+    count++;
+    const tags = tech ? tech.split(',').map(t=>`<span class="tech-tag">${t.trim()}</span>`).join('') : '';
+    const imgHtml = img
+      ? `<img src="${img}" alt="${title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`+`<div class="project-img-placeholder" style="display:none">${String(count).padStart(2,'0')}</div>`
+      : `<div class="project-img-placeholder">${String(count).padStart(2,'0')}</div>`;
+    const overlayClick = link ? `onclick="window.open('${link}','_blank')"` : '';
+    const card = document.createElement('div');
+    card.className='project-card';
+    card.innerHTML=`
+      <div class="project-img">${imgHtml}
+        <div class="project-overlay"><button class="overlay-btn" ${overlayClick}>${link?'View Live':'View Project'}</button></div>
+      </div>
+      <div class="project-body">
+        <div class="project-category">${cat}</div>
+        <div class="project-title">${title}</div>
+        <p class="project-desc">${desc}</p>
+        <div class="project-tech">${tags}</div>
+      </div>`;
+    document.getElementById('projectsGrid').insertBefore(card, document.getElementById('addPlaceholder'));
+    ['pTitle','pDesc','pTech','pImg','pLink'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('pCat').selectedIndex=0;
+    document.getElementById('modal').classList.remove('open');
+  });
+</script>
+</body>
+</html>
